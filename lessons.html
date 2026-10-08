@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lessons — LabsforKidz</title>
+<meta name="description" content="Free at-home STEM and Health/Biology lab experiments for kids. Cost-free, hands-on science activities families can do together.">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --navy-darkest: #0a1628;
+  --navy-dark: #0d1f3c;
+  --navy: #112a50;
+  --navy-mid: #1a3a6e;
+  --navy-light: #2a5298;
+  --blue-accent: #4a90d9;
+  --blue-bright: #6db3f8;
+  --blue-glow: #89c4ff;
+  --white: #ffffff;
+  --white-90: rgba(255,255,255,0.9);
+  --white-70: rgba(255,255,255,0.7);
+  --white-50: rgba(255,255,255,0.5);
+  --white-20: rgba(255,255,255,0.2);
+  --white-10: rgba(255,255,255,0.1);
+  --white-05: rgba(255,255,255,0.05);
+  --font-display: 'Outfit', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-display);
+  background: var(--navy-darkest);
+  color: var(--white);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== PARTICLE CANVAS ===== */
+#particle-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.4s ease;
+  background: transparent;
+}
+
+.navbar.scrolled {
+  background: rgba(10, 22, 40, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--white-10);
+  padding: 0.6rem 2rem;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+}
+
+.nav-logo img {
+  height: 45px;
+  transition: height 0.3s ease;
+}
+
+.navbar.scrolled .nav-logo img { height: 36px; }
+
+.nav-logo span {
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--white);
+}
+
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+  align-items: center;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--white-70);
+  font-weight: 500;
+  font-size: 0.9rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  position: relative;
+  transition: color 0.3s;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--blue-bright);
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover { color: var(--white); }
+.nav-links a:hover::after { width: 100%; }
+.nav-links a.active { color: var(--white); }
+.nav-links a.active::after { width: 100%; }
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  z-index: 1001;
+  background: none;
+  border: none;
+  padding: 5px;
+}
+
+.hamburger span {
+  width: 28px;
+  height: 2px;
+  background: var(--white);
+  transition: all 0.3s;
+  display: block;
+}
+
+.hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.active span:nth-child(2) { opacity: 0; }
+.hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+/* ===== MOBILE NAV OVERLAY ===== */
+.mobile-nav {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 22, 40, 0.98);
+  backdrop-filter: blur(20px);
+  z-index: 999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.mobile-nav.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mobile-nav a {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--white);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: color 0.3s;
+}
+
+.mobile-nav a:hover { color: var(--blue-bright); }
+
+/* ===== PAGE HERO ===== */
+.page-hero {
+  position: relative;
+  z-index: 1;
+  padding: 10rem 2rem 4rem;
+  text-align: center;
+}
+
+.page-hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+  animation: fadeUp 1s ease 0.3s both;
+}
+
+.page-hero .tagline {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--blue-accent);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.page-hero h1 {
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  font-weight: 900;
+  letter-spacing: -1px;
+  line-height: 1.15;
+  margin-bottom: 1rem;
+}
+
+.page-hero h1 .highlight {
+  background: linear-gradient(135deg, var(--blue-bright), var(--blue-glow));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.page-hero p {
+  font-size: 1.1rem;
+  color: var(--white-70);
+  max-width: 620px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* ===== SECTIONS ===== */
+section {
+  position: relative;
+  z-index: 1;
+  padding: 5rem 2rem;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+
+.section-header .label {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--blue-accent);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.section-header h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.section-header p {
+  color: var(--white-70);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* ===== SUBSECTION TABS ===== */
+.subsection-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.subsection-tab {
+  padding: 0.75rem 2rem;
+  border-radius: 50px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.35s ease;
+  border: 2px solid var(--white-20);
+  background: transparent;
+  color: var(--white-70);
+}
+
+.subsection-tab:hover {
+  border-color: var(--blue-bright);
+  color: var(--white);
+  background: var(--white-05);
+}
+
+.subsection-tab.active {
+  background: linear-gradient(135deg, var(--blue-accent), var(--blue-bright));
+  border-color: transparent;
+  color: var(--white);
+  box-shadow: 0 4px 25px rgba(74, 144, 217, 0.35);
+}
+
+/* ===== LESSONS CONTAINER ===== */
+.lessons-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.lessons-panel {
+  display: none;
+}
+
+.lessons-panel.active {
+  display: block;
+  animation: fadeUp 0.5s ease both;
+}
+
+/* ===== LAB CARD ===== */
+.lab-card {
+  background: linear-gradient(135deg, var(--white-05), var(--white-10));
+  border: 1px solid var(--white-10);
+  border-radius: 24px;
+  overflow: hidden;
+  margin-bottom: 2.5rem;
+  transition: all 0.4s ease;
+  position: relative;
+}
+
+.lab-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 3px;
+  background: linear-gradient(90deg, var(--blue-accent), var(--blue-bright));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.lab-card:hover {
+  border-color: var(--white-20);
+  background: linear-gradient(135deg, var(--white-10), rgba(74,144,217,0.08));
+}
+
+.lab-card:hover::before { opacity: 1; }
+
+.lab-card-header {
+  padding: 2.5rem 2.5rem 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+
+.lab-number {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(74,144,217,0.2), rgba(106,179,248,0.1));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.lab-card-header-text h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.lab-card-header-text .lab-meta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.lab-tag {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  background: rgba(74,144,217,0.15);
+  color: var(--blue-bright);
+  border: 1px solid rgba(74,144,217,0.25);
+}
+
+.lab-tag.green {
+  background: rgba(46,204,113,0.12);
+  color: #6ee7a0;
+  border-color: rgba(46,204,113,0.25);
+}
+
+.lab-card-body {
+  padding: 1.5rem 2.5rem 2.5rem;
+}
+
+.lab-card-body h4 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--blue-accent);
+  margin-bottom: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.lab-card-body h4:first-child {
+  margin-top: 0;
+}
+
+.lab-card-body p {
+  color: var(--white-70);
+  line-height: 1.7;
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+}
+
+.lab-card-body ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 0.5rem;
+}
+
+.lab-card-body ul li {
+  color: var(--white-70);
+  line-height: 1.7;
+  font-size: 0.95rem;
+  padding-left: 1.5rem;
+  position: relative;
+  margin-bottom: 0.3rem;
+}
+
+.lab-card-body ul li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--blue-bright);
+  font-weight: 700;
+}
+
+.lab-steps {
+  counter-reset: step-counter;
+  list-style: none !important;
+  padding: 0 !important;
+}
+
+.lab-steps li {
+  counter-increment: step-counter;
+  padding-left: 2.25rem !important;
+  margin-bottom: 0.6rem !important;
+}
+
+.lab-steps li::before {
+  content: counter(step-counter) '.' !important;
+  position: absolute;
+  left: 0;
+  color: var(--blue-bright);
+  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+
+.science-note {
+  background: linear-gradient(135deg, rgba(74,144,217,0.1), rgba(106,179,248,0.05));
+  border: 1px solid var(--white-10);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-top: 1rem;
+}
+
+.science-note p {
+  color: var(--blue-glow) !important;
+  font-weight: 500;
+  font-size: 0.9rem !important;
+  margin: 0 !important;
+}
+
+.science-note p::before {
+  content: '💡 ';
+}
+
+/* ===== BACK LINK ===== */
+.back-link-container {
+  text-align: center;
+  padding: 2rem 2rem 5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 2rem;
+  border-radius: 50px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid var(--white-20);
+  background: transparent;
+  color: var(--white);
+}
+
+.back-link:hover {
+  border-color: var(--blue-bright);
+  background: var(--white-05);
+  transform: translateY(-2px);
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid var(--white-10);
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.footer-inner {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.footer-logo img { height: 35px; }
+
+.footer-logo span {
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.footer p {
+  color: var(--white-50);
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.footer-links {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  list-style: none;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  color: var(--white-50);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.3s;
+}
+
+.footer-links a:hover { color: var(--blue-bright); }
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===== BUBBLES ===== */
+.bubble-container {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(106,179,248,0.15), rgba(74,144,217,0.05));
+  border: 1px solid rgba(106,179,248,0.08);
+  animation: rise linear infinite;
+}
+
+@keyframes rise {
+  0% { transform: translateY(100vh) scale(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-20vh) scale(1); opacity: 0; }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .mobile-nav { display: flex; }
+  .page-hero h1 { font-size: 2rem; }
+  .page-hero { padding: 8rem 1.25rem 3rem; }
+  section { padding: 3rem 1.25rem; }
+  .lab-card-header { flex-direction: column; gap: 0.75rem; padding: 1.5rem 1.5rem 0; }
+  .lab-card-body { padding: 1.25rem 1.5rem 1.75rem; }
+  .subsection-tabs { gap: 0.5rem; }
+  .subsection-tab { padding: 0.6rem 1.25rem; font-size: 0.85rem; }
+}
+
+@media (max-width: 550px) {
+  .lab-card-header-text h3 { font-size: 1.15rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Particle Canvas -->
+<canvas id="particle-canvas"></canvas>
+
+<!-- Bubble Container -->
+<div class="bubble-container" id="bubbles"></div>
+
+<!-- Navbar -->
+<nav class="navbar scrolled" id="navbar">
+  <a href="index.html" class="nav-logo">
+    <img src="nonprofit_logo.png" alt="LabsforKidz Logo">
+    <span>LabsforKidz</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="lessons.html" class="active">Lessons</a></li>
+    <li><a href="index.html#events">Events</a></li>
+    <li><a href="index.html#contact">Contact Us</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobile-nav">
+  <a href="index.html" onclick="closeMobile()">Home</a>
+  <a href="index.html#about" onclick="closeMobile()">About</a>
+  <a href="lessons.html" onclick="closeMobile()">Lessons</a>
+  <a href="index.html#events" onclick="closeMobile()">Events</a>
+  <a href="index.html#contact" onclick="closeMobile()">Contact Us</a>
+</div>
+
+<!-- ===== PAGE HERO ===== -->
+<header class="page-hero">
+  <div class="page-hero-content">
+    <span class="tagline">// Learn at Home</span>
+    <h1>Free <span class="highlight">At-Home Labs</span></h1>
+    <p>Cost-free, hands-on experiments your family can do with everyday household items. Spark curiosity and explore real science — no special equipment needed.</p>
+  </div>
+</header>
+
+<!-- ===== LESSONS ===== -->
+<section id="lessons">
+  <div class="section-header reveal">
+    <span class="label">// Choose a Track</span>
+    <h2>Explore Our Labs</h2>
+    <p>Pick a category below to browse five guided experiments with step-by-step instructions.</p>
+  </div>
+
+  <div class="subsection-tabs">
+    <button class="subsection-tab active" onclick="showPanel('stem')">🔧 STEM</button>
+    <button class="subsection-tab" onclick="showPanel('health')">🧬 Health / Biology</button>
+  </div>
+
+  <div class="lessons-container">
+
+    <!-- ========== STEM PANEL ========== -->
+    <div class="lessons-panel active" id="panel-stem">
+
+      <!-- STEM Lab 1 -->
+      <div class="lab-card reveal">
+        <div class="lab-card-header">
+          <div class="lab-number">🌋</div>
+          <div class="lab-card-header-text">
+            <h3>Kitchen Volcano</h3>
+            <div class="lab-meta">
+              <span class="lab-tag">Chemistry</span>
+              <span class="lab-tag green">Ages 5+</span>
+            </div>
+          </div>
+        </div>
+        <div class="lab-card-body">
+          <h4>What You'll Need</h4>
+          <ul>
+            <li>Baking soda (2 tablespoons)</li>
+            <li>White vinegar (½ cup)</li>
+            <li>Dish soap (a small squirt)</li>
+            <li>Food coloring (red or orange, optional)</li>
+            <li>A cup, jar, or plastic bottle</li>
+            <li>A tray or baking sheet to catch overflow</li>
+          </ul>
+          <h4>Instructions</h4>
+          <ol class="lab-steps">
+            <li>Place your cup or bottle on the tray so cleanup is easy.</li>
+            <li>Add 2 tablespoons of baking soda into the container.</li>
+            <li>Squirt in a small amount of dish soap and add a few drops of food coloring.</li>
+            <li>Slowly pour the vinegar into the container and step back!</li>
+            <li>Watch the fizzy "lava" erupt over the edges. Try different vinegar amounts and observe the changes.</li>
+          </ol>
+          <div class="science-note">
+            <p><strong>The Science:</strong> Baking soda (a base) reacts with vinegar (an acid) to produce carbon dioxide gas. The dish soap traps the gas in bubbles, making the eruption foamy and dramatic — a classic acid-base reaction!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEM Lab 2 -->
+      <div class="lab-card reveal">
+        <div class="lab-card-header">
+          <div class="lab-number">🥚</div>
+          <div class="lab-card-header-text">
+            <h3>Unbreakable Egg Bridge</h3>
+            <div class="lab-meta">
+              <span class="lab-tag">Engineering</span>
+              <span class="lab-tag green">Ages 7+</span>
+            </div>
+          </div>
+        </div>
+        <div class="lab-card-body">
+          <h4>What You'll Need</h4>
+          <ul>
+            <li>4 raw eggs</li>
+            <li>Masking tape</li>
+            <li>A flat, lightweight board or hardcover book</li>
+            <li>Small canned goods for weight</li>
+          </ul>
+          <h4>Instructions</h4>
+          <ol class="lab-steps">
+            <li>Wrap a small piece of tape around the middle of each egg to reinforce them slightly.</li>
+            <li>Arrange the 4 eggs in a rectangular pattern, pointed ends facing up, on a flat surface.</li>
+            <li>Gently rest the board on top of the four eggs so weight distributes evenly.</li>
+            <li>Slowly begin stacking canned goods on top of the board, one at a time.</li>
+            <li>Keep count! See how many cans the eggs can hold before they crack. Most people are shocked by the result.</li>
+          </ol>
+          <div class="science-note">
+            <p><strong>The Science:</strong> An egg's dome shape distributes weight evenly across its curved surface — the same principle behind arches in architecture. This is called a compressive structure, and it's why domes and arches can support tremendous loads.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEM Lab 3 -->
+      <div class="lab-card reveal">
+        <div class="lab-card-header">
+          <div class="lab-number">🌈</div>
+          <div class="lab-card-header-text">
+            <h3>Walking Water Rainbow</h3>
+            <div class="lab-meta">
+              <span class="lab-tag">Physics</span>
+              <span class="lab-tag green">Ages 5+</span>
+            </div>
+          </div>
+        </div>
+        <div class="lab-card-body">
+          <h4>What You'll Need</h4>
+          <ul>
+            <li>7 clear cups or glasses</li>
+            <li>Paper towels (3–4 sheets, folded lengthwise)</li>
+            <li>Water</li>
+            <li>Food coloring — red, yellow, blue</li>
+          </ul>
+          <h4>Instructions</h4>
+          <ol class="lab-steps">
+            <li>Line up 7 cups in a row. Fill cups 1, 3, 5, and 7 about ¾ full with water.</li>
+            <li>Add red food coloring to cups 1 and 7, yellow to cup 3, and blue to cup 5.</li>
+            <li>Fold paper towels into strips about 1 inch wide, and drape one strip from cup 1 into cup 2, another from cup 2 into cup 3, and so on — connecting all seven cups.</li>
+            <li>Wait and watch! Over 1–2 hours, the colored water will "walk" up and over the paper towels into the empty cups.</li>
+            <li>The empty cups will fill with new, blended colors — orange, green, and purple — creating a full rainbow.</li>
+          </ol>
+          <div class="science-note">
+            <p><strong>The Science:</strong> Water molecules climb through tiny gaps in the paper towel fibers through a process called capillary action. This is the same way plants pull water from their roots up to their leaves!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEM Lab 4 -->
+      <div class="lab-card reveal">
+        <div class="lab-card-header">
+          <div class="lab-number">🧲</div>
+          <div class="lab-card-header-text">
+            <h3>Homemade Compass</h3>
+            <div class="lab-meta">
+              <span class="lab-tag">Earth Science</span>
+              <span class="lab-tag green">Ages 8+</span>
+            </div>
+          </div>
+        </div>
+        <div class="lab-card-body">
+          <h4>What You'll Need</h4>
+          <ul>
+            <li>A sewing needle</li>
+            <li>A small magnet (a refrigerator magnet works)</li>
+            <li>A small piece of cork or foam (about 1 inch)</li>
+            <li>A shallow dish of water</li>
+          </ul>
+          <h4>Instructions</h4>
+          <ol class="lab-steps">
+            <li>Rub the magnet along the needle about 30–50 times in the same direction (not back and forth). This magnetizes the needle.</li>
+            <li>Carefully push the needle through the center of the cork or foam piece so it lies flat.</li>
+            <li>Fill a shallow dish with water and gently place the cork with the needle on the water's surface.</li>
+            <li>Watch as the needle slowly rotates and settles. It will align itself along the north–south axis.</li>
+            <li>Use a real compass or a compass app on a phone to verify your homemade compass is pointing north!</li>
+          </ol>
+          <div class="science-note">
+            <p><strong>The Science:</strong> Rubbing the magnet on the needle aligns its iron atoms, turning it into a tiny magnet. Earth itself has a magnetic field, and the magnetized needle aligns with it — just like a real compass needle does.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEM Lab 5 -->
+      <div class="lab-card reveal">
+        <div class="lab-card-header">
+          <div class="lab-number">🚀</div>
+          <div class="lab-card-header-text">
+            <h3>Balloon Rocket Racer</h3>
+            <div class="lab-meta">
+              <span class="lab-tag">Physics</span>
+              <span class="lab-tag green">Ages 5+</span>
+            </div>
+          </div>
+        </div>
+        <div class="lab-card-body">
+          <h4>What You'll Need</h4>
+          <ul>
+            <li>A balloon (long ones work best)</li>
+            <li>A long piece of string or fishing line (10–15 feet)</li>
+            <li>A plastic straw</li>
+            <li>Tape</li>
+            <li>Two chairs or posts to tie the string between</li>
+          </ul>
+          <h4>Instructions</h4>
+          <ol class="lab-steps">
+            <li>Thread the string through the straw, then tie each end of the string to a chair. Pull the chairs apart so the string is taut.</li>
+            <li>Blow up the balloon and pinch the end shut — don't tie it.</li>
+            <li>While pinching, tape the inflated balloon to the straw (tape the straw along the top of the balloon).</li>
+            <li>Slide the straw-balloon to one end of the string, then let go!</li>
+            <li>The balloon will rocket across the string. Try different balloon sizes and string angles to see what changes the speed and distance.</li>
+          </ol>
+          <div class="science-note">
+            <p><strong>The Science:</strong> This demonstrates Newton's Third Law — for every action, there is an equal and opposite reaction. Air rushes backward out of the balloon, pushing it forward along the string. Real rockets work the same way, but with burning fuel instead of air!</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========== HEALTH / BIOLOGY PANEL ========== -->
+    <div class="lessons-panel" id="panel-health">
+
+      <!-- Health Lab 1 -->
+      <div class="lab-card reveal">
+        <div class="lab-card-header">
+          <div class="lab-number">🫁</div>
+          <div class="lab-card-header-text">
+            <h3>Build a Model Lung</h3>
+            <div class="lab-meta">
+              <span class="lab-tag">Anatomy</span>
+              <span class="lab-tag green">Ages 7+</span>
+            </div>
+          </div>
+        </div>
+        <div class="lab-card-body">
+          <h4>What You'll Need</h4>
+          <ul>
+            <li>A plastic bottle (16 oz, cut in half — use the top half)</li>
+            <li>2 small balloons</li>
+            <li>1 larger balloon or a piece of a plastic bag</li>
+            <li>A rubber band</li>
+            <li>A Y-shaped straw or 2 straws taped together</li>
+            <li>Modeling clay or tape to seal edges</li>
+          </ul>
+          <h4>Instructions</h4>
+          <ol class="lab-steps">
+            <li>Attach a small balloon to each branch of the Y-straw. These represent the lungs.</li>
+            <li>Push the straw through the bottle's mouth so the balloons hang inside the bottle.</li>
+            <li>Seal around the straw at the bottle opening with clay so no air can leak.</li>
+            <li>Stretch the large balloon (or plastic) over the open bottom of the bottle and secure with a rubber band. This is your "diaphragm."</li>
+            <li>Pull the diaphragm down and watch the lung balloons inflate. Push it up and they deflate. You've built a working respiratory model!</li>
+          </ol>
+          <div class="science-note">
+            <p><strong>The Science:</strong> When you pull the diaphragm down, it increases the volume inside the bottle and decreases the air pressure, causing air to rush in and inflate the "lungs." This is exactly how your real diaphragm muscle helps you breathe.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Health Lab 2 -->
+      <div class="lab-card reveal">
+        <div class="lab-card-header">
+          <div class="lab-number">🦠</div>
+          <div class="lab-card-header-text">
+            <h3>Germ Spread Experiment</h3>
+            <div class="lab-meta">
+              <span class="lab-tag">Hygiene</span>
+              <span class="lab-tag green">Ages 5+</span>
+            </div>
+          </div>
+        </div>
+        <div class="lab-card-body">
+          <h4>What You'll Need</h4>
+          <ul>
+            <li>Glitter (fine craft glitter works best)</li>
+            <li>Hand lotion or cooking oil</li>
+            <li>Soap and water</li>
+            <li>Paper towels</li>
+          </ul>
+          <h4>Instructions</h4>
+          <ol class="lab-steps">
+            <li>Rub a thin layer of lotion or oil on your hands, then sprinkle glitter generously over both palms and fingers.</li>
+            <li>Now go about normal activities for 5 minutes — touch doorknobs, books, your face, shake hands with a family member.</li>
+            <li>Stop and look around. Notice how much glitter has spread to surfaces and other people. Each speck represents a "germ."</li>
+            <li>Try wiping your hands with just a dry paper towel. How much glitter remains?</li>
+            <li>Now wash your hands thoroughly with soap and water for 20 seconds. Compare the result — the soap breaks the oil and washes the "germs" away.</li>
+          </ol>
+          <div class="science-note">
+            <p><strong>The Science:</strong> Germs (bacteria and viruses) spread through touch just like glitter does. Soap works by breaking down the oils that germs cling to and creating a slippery surface that rinses them away. Twenty seconds of scrubbing is the sweet spot for removing most pathogens.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Health Lab 3 -->
+      <div class="lab-card reveal">
+        <div class="lab-card-header">
+          <div class="lab-number">🌱</div>
+          <div class="lab-card-header-text">
+            <h3>Bag Greenhouse Seed Sprout</h3>
+            <div class="lab-meta">
+              <span class="lab-tag">Botany</span>
+              <span class="lab-tag green">Ages 5+</span>
+            </div>
+          </div>
+        </div>
+        <div class="lab-card-body">
+          <h4>What You'll Need</h4>
+          <ul>
+            <li>A clear ziplock bag</li>
+            <li>A damp paper towel</li>
+            <li>2–3 dried beans (lima, pinto, or kidney)</li>
+            <li>Tape</li>
+            <li>A sunny window</li>
+          </ul>
+          <h4>Instructions</h4>
+          <ol class="lab-steps">
+            <li>Dampen a paper towel so it's wet but not dripping, then fold it to fit inside the ziplock bag.</li>
+            <li>Place 2–3 dried beans on top of the paper towel, spacing them apart, and seal the bag.</li>
+            <li>Tape the bag to a sunny window at the child's eye level.</li>
+            <li>Check daily! Mist or re-dampen the towel if it dries out. Within 3–7 days, roots and a tiny shoot will emerge.</li>
+            <li>Track the growth by drawing the bean each day in a journal. Once the sprout has leaves, transplant it into soil if desired.</li>
+          </ol>
+          <div class="science-note">
+            <p><strong>The Science:</strong> Seeds contain a tiny embryo plant plus stored food. Given water, warmth, and light, the seed "wakes up" through a process called germination. The root grows down (gravitropism) and the shoot grows up toward light (phototropism).</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Health Lab 4 -->
+      <div class="lab-card reveal">
+        <div class="lab-card-header">
+          <div class="lab-number">🧅</div>
+          <div class="lab-card-header-text">
+            <h3>DIY Cheek Cell Observation</h3>
+            <div class="lab-meta">
+              <span class="lab-tag">Cell Biology</span>
+              <span class="lab-tag green">Ages 8+</span>
+            </div>
+          </div>
+        </div>
+        <div class="lab-card-body">
+          <h4>What You'll Need</h4>
+          <ul>
+            <li>A clean toothpick or cotton swab</li>
+            <li>A glass of water</li>
+            <li>A drop of food coloring (blue works best)</li>
+            <li>A white plate or shallow bowl</li>
+            <li>A magnifying glass (or phone camera zoomed in)</li>
+          </ul>
+          <h4>Instructions</h4>
+          <ol class="lab-steps">
+            <li>Gently scrape the inside of your cheek with a clean toothpick or the flat side of a cotton swab. This collects cheek cells (it doesn't hurt!).</li>
+            <li>Swirl the toothpick in a small amount of water on the white plate to transfer the cells.</li>
+            <li>Add one drop of food coloring to the water. The dye will stain the cells, making them easier to see.</li>
+            <li>Use a magnifying glass (or your phone's camera on max zoom) to examine the plate. Look for tiny, flat, oval shapes — those are your cheek cells.</li>
+            <li>Compare what you see to pictures of animal cells online. Can you identify the cell membrane and the darker nucleus in the center?</li>
+          </ol>
+          <div class="science-note">
+            <p><strong>The Science:</strong> Every part of your body is made up of trillions of microscopic cells. Cheek cells are flat epithelial cells that line the inside of your mouth. Each one has a membrane (outer wall), cytoplasm (jelly-like interior), and a nucleus (the "brain" that holds your DNA).</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Health Lab 5 -->
+      <div class="lab-card reveal">
+        <div class="lab-card-header">
+          <div class="lab-number">❤️</div>
+          <div class="lab-card-header-text">
+            <h3>Measure Your Heart Rate</h3>
+            <div class="lab-meta">
+              <span class="lab-tag">Physiology</span>
+              <span class="lab-tag green">Ages 6+</span>
+            </div>
+          </div>
+        </div>
+        <div class="lab-card-body">
+          <h4>What You'll Need</h4>
+          <ul>
+            <li>A timer or stopwatch (phone works fine)</li>
+            <li>Paper and pencil to record results</li>
+            <li>Your own two fingers (index and middle)</li>
+          </ul>
+          <h4>Instructions</h4>
+          <ol class="lab-steps">
+            <li>Sit still and relaxed for 2 minutes. Then place your index and middle fingers on the inside of your wrist (below the thumb) until you feel a pulse.</li>
+            <li>Start the timer and count each beat for 30 seconds. Multiply that number by 2 to get your resting heart rate (beats per minute).</li>
+            <li>Write down your resting heart rate. Now do 1 minute of jumping jacks, running in place, or dancing.</li>
+            <li>Immediately re-measure your pulse for 30 seconds and multiply by 2 again. Record this active heart rate.</li>
+            <li>Rest for 5 minutes and measure one more time. Compare all three numbers. How long did it take your heart to return to its resting rate?</li>
+          </ol>
+          <div class="science-note">
+            <p><strong>The Science:</strong> Your heart pumps blood carrying oxygen to every muscle in your body. When you exercise, your muscles need more oxygen, so your heart beats faster to deliver it. A healthy heart recovers quickly back to its resting rate — this is called cardiovascular fitness.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== BACK LINK ===== -->
+<div class="back-link-container">
+  <a href="index.html" class="back-link">← Back to Home</a>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <img src="nonprofit_logo.png" alt="LabsforKidz">
+      <span>LabsforKidz</span>
+    </div>
+    <p>Bridging Gaps — Making STEM accessible for every child.</p>
+    <ul class="footer-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="lessons.html">Lessons</a></li>
+      <li><a href="index.html#events">Events</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+      <li><a href="https://www.instagram.com/labsforkidz/" target="_blank" rel="noopener">Instagram</a></li>
+      <li><a href="mailto:labsforkidz@gmail.com">Email</a></li>
+    </ul>
+    <p style="margin-top: 2rem; font-size: 0.75rem;">© 2026 LabsforKidz. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+// ===== TAB SWITCHING =====
+function showPanel(panel) {
+  document.querySelectorAll('.lessons-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.subsection-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + panel).classList.add('active');
+  event.currentTarget.classList.add('active');
+
+  // Re-observe reveal elements in newly shown panel
+  const newReveals = document.querySelectorAll('#panel-' + panel + ' .reveal:not(.visible)');
+  newReveals.forEach(el => observer.observe(el));
+}
+
+// ===== PARTICLE CANVAS =====
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let w, h;
+
+function resize() {
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * w;
+    this.y = Math.random() * h;
+    this.size = Math.random() * 3 + 0.5;
+    this.speedX = (Math.random() - 0.5) * 0.4;
+    this.speedY = (Math.random() - 0.5) * 0.4 - 0.15;
+    this.opacity = Math.random() * 0.4 + 0.1;
+    this.life = Math.random() * 400 + 200;
+    this.maxLife = this.life;
+    this.hue = 200 + Math.random() * 30;
+  }
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    this.life--;
+    if (this.life < 50) this.opacity *= 0.97;
+    if (this.life <= 0 || this.x < -20 || this.x > w+20 || this.y < -20 || this.y > h+20) this.reset();
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${this.hue}, 70%, 70%, ${this.opacity})`;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${this.hue}, 70%, 70%, ${this.opacity * 0.1})`;
+    ctx.fill();
+  }
+}
+
+const pCount = Math.min(80, Math.floor(w * h / 15000));
+for (let i = 0; i < pCount; i++) particles.push(new Particle());
+
+function drawConnections() {
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < 120) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `hsla(210, 60%, 60%, ${(1 - dist/120) * 0.08})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function animate() {
+  ctx.clearRect(0, 0, w, h);
+  particles.forEach(p => { p.update(); p.draw(); });
+  drawConnections();
+  requestAnimationFrame(animate);
+}
+animate();
+
+// ===== BUBBLES =====
+const bubbleContainer = document.getElementById('bubbles');
+function createBubble() {
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  const size = Math.random() * 60 + 10;
+  bubble.style.width = size + 'px';
+  bubble.style.height = size + 'px';
+  bubble.style.left = Math.random() * 100 + '%';
+  bubble.style.animationDuration = (Math.random() * 15 + 10) + 's';
+  bubble.style.animationDelay = Math.random() * 5 + 's';
+  bubbleContainer.appendChild(bubble);
+  setTimeout(() => bubble.remove(), 25000);
+}
+for (let i = 0; i < 8; i++) createBubble();
+setInterval(createBubble, 3000);
+
+// ===== NAVBAR SCROLL =====
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60 || true);
+});
+
+// ===== HAMBURGER =====
+const hamburger = document.getElementById('hamburger');
+const mobileNav = document.getElementById('mobile-nav');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('active');
+  mobileNav.classList.toggle('open');
+  document.body.style.overflow = mobileNav.classList.contains('open') ? 'hidden' : '';
+});
+function closeMobile() {
+  hamburger.classList.remove('active');
+  mobileNav.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ===== REVEAL ON SCROLL =====
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
