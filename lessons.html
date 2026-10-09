@@ -394,6 +394,8 @@ section {
 
 .lab-card-body {
   padding: 1.5rem 2.5rem 2.5rem;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .lab-card-body h4 {
@@ -450,6 +452,9 @@ section {
   counter-increment: step-counter;
   padding-left: 2.25rem !important;
   margin-bottom: 0.6rem !important;
+  position: relative;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .lab-steps li::before {
@@ -626,6 +631,31 @@ section {
 @media (max-width: 550px) {
   .lab-card-header-text h3 { font-size: 1.15rem; }
 }
+
+/* ===== CUSTOM SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--navy-darkest);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--navy-mid), var(--blue-accent));
+  border-radius: 8px;
+  border: 2px solid var(--navy-darkest);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--blue-accent), var(--blue-bright));
+}
+
+/* Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--navy-mid) var(--navy-darkest);
+}
 </style>
 </head>
 <body>
@@ -666,7 +696,7 @@ section {
 <!-- ===== PAGE HERO ===== -->
 <header class="page-hero">
   <div class="page-hero-content">
-    <span class="tagline">// Learn at Home</span>
+    <span class="tagline">Learn at Home</span>
     <h1>Free <span class="highlight">At-Home Labs</span></h1>
     <p>Cost-free, hands-on experiments your family can do with everyday household items. Spark curiosity and explore real science — no special equipment needed.</p>
   </div>

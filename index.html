@@ -998,6 +998,31 @@ section {
   .cards-grid { grid-template-columns: 1fr; }
   .hero-buttons { flex-direction: column; align-items: center; }
 }
+
+/* ===== CUSTOM SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--navy-darkest);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--navy-mid), var(--blue-accent));
+  border-radius: 8px;
+  border: 2px solid var(--navy-darkest);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--blue-accent), var(--blue-bright));
+}
+
+/* Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--navy-mid) var(--navy-darkest);
+}
 </style>
 </head>
 <body>
